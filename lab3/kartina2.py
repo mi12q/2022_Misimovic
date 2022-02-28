@@ -4,11 +4,29 @@ import pygame.draw as dr
 pygame.init()
 
 FPS = 30
-screen = pygame.display.set_mode((500, 700))
-screen.fill('cyan')
+screen = pygame.display.set_mode((500, 700), 0, 32)
+screen.fill('white')
+fish = pygame.image.load(r'C:\\Users\\edupc\\2022_Misimovic\\lab3\\fish.jpg')
+fish = pygame.transform.scale(fish, (500,700))
+fish_small = pygame.transform.scale(fish, (300,500))
+copy = fish.copy()
+copy2 = fish_small.copy()
+fish_flip = pygame.transform.flip(copy, True, False)
+fish_upsidedown = pygame.transform.flip(copy2, False, True)
+fish.set_colorkey((255,255,255))
+fish_flip.set_colorkey((255,255,255))
+fish_small.set_colorkey((255,255,255))
+fish_upsidedown.set_colorkey((255,255,255))
 
-dr.polygon(screen, (0, 0, 0), [(0, 700), (500, 700), (500, 400), (0, 400)], 0)
-dr.polygon(screen, (255, 255, 255), [(0, 700), (500, 700), (500, 401), (0, 401)], 0)
+
+screen.blit(fish,(-10,-20))
+screen.blit(fish_flip,(320,30))
+screen.blit(fish_small,(80, 0) )
+screen.blit(fish_upsidedown,(30, 400) )
+screen.blit(fish_upsidedown,(170, 400) )
+#screen.blit(fish_flip,(320,10))
+# dr.polygon(screen, (0, 0, 0), [(0, 700), (500, 700), (500, 400), (0, 400)], 0)
+# dr.polygon(screen, (255, 255, 255), [(0, 700), (500, 700), (500, 401), (0, 401)], 0)
 
 # лужа
 dr.ellipse(screen, (0, 0, 0), (290, 500, 151, 51), 0)
@@ -29,16 +47,16 @@ def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
     surface.blit(shape_surf, rect)
-
-
-draw_circle_alpha(screen, (255, 255, 255, 200), (310, 120), 140)
-dr.circle(screen, (255, 255, 255), (310, 120), 15)
-draw_rect_alpha(screen, (255, 255, 255, 200), (295, 10, 30, 250))
-draw_rect_alpha(screen, (255, 255, 255, 200), (170, 105, 280, 30))
-
-dr.circle(screen, (255, 255, 255), (435, 120), 12)
-dr.circle(screen, (255, 255, 255), (185, 120), 12)
-dr.circle(screen, (255, 255, 255), (310, 245), 12)
+#
+#
+# draw_circle_alpha(screen, (255, 255, 255, 200), (310, 120), 140)
+# dr.circle(screen, (255, 255, 255), (310, 120), 15)
+# draw_rect_alpha(screen, (255, 255, 255, 200), (295, 10, 30, 250))
+# draw_rect_alpha(screen, (255, 255, 255, 200), (170, 105, 280, 30))
+#
+# dr.circle(screen, (255, 255, 255), (435, 120), 12)
+# dr.circle(screen, (255, 255, 255), (185, 120), 12)
+# dr.circle(screen, (255, 255, 255), (310, 245), 12)
 
 # стержень
 dr.line(screen, (0, 0, 0), (400, 200), (400, 520))
@@ -50,24 +68,27 @@ dr.lines(screen, (0, 0, 0), False, [(200, 400), (300, 280), (400, 200)], 5)
 
 # голова
 
-dr.ellipse(screen, (0, 0, 0), (100, 250, 112, 62), 0)
-dr.ellipse(screen, (255, 255, 255), (101, 251, 110, 60), 0)
-dr.ellipse(screen, (0, 0, 0), (150, 271, 7, 7), 0)
-dr.ellipse(screen, (0, 0, 0), (205, 271, 7, 7), 0)
+dr.ellipse(screen, (255, 253, 247), (101, 251, 110, 60), 0)
+dr.ellipse(screen, (0, 0, 0), (100, 250, 112, 62), 3)
+dr.ellipse(screen, (0, 0, 0), (150, 271, 10, 10), 0)
+dr.ellipse(screen, (0, 0, 0), (205, 271, 10, 10), 0)
 dr.aalines(screen, (0, 0, 0), False, [(210, 290), (190, 295), (150, 295), (140, 295)], blend=1)
-dr.ellipse(screen, (0, 0, 0), (105, 257, 17, 17), 0)
-dr.ellipse(screen, (255, 255, 255), (106, 258, 15, 15), 0)
+dr.aalines(screen, (0, 0, 0), False, [(210, 291), (190, 294), (150, 294), (140, 294)], blend=1)
+dr.aalines(screen, (0, 0, 0), False, [(210, 292), (190, 293), (150, 293), (140, 293)], blend=1)
+dr.ellipse(screen, (255, 253, 247), (106, 258, 15, 15), 0)
+dr.ellipse(screen, (0, 0, 0), (105, 257, 17, 17), 3)
 
 # тело
 
-dr.ellipse(screen, (0, 0, 0), (50, 300, 152, 302), 0)
-dr.ellipse(screen, (255, 255, 255), (51, 301, 150, 300), 0)
-dr.ellipse(screen, (0, 0, 0), (170, 350, 72, 32), 0)
-dr.ellipse(screen, (255, 255, 255), (171, 351, 70, 30), 0)
-dr.ellipse(screen, (0, 0, 0), (140, 500, 122, 92), 0)
-dr.ellipse(screen, (255, 255, 255), (141, 501, 120, 90), 0)
-dr.ellipse(screen, (0, 0, 0), (210, 570, 92, 42), 0)
-dr.ellipse(screen, (255, 255, 255), (211, 571, 91, 40), 0)
+
+dr.ellipse(screen, (255, 253, 247), (51, 301, 150, 300), 0)
+dr.ellipse(screen, (0, 0, 0), (50, 300, 152, 302), 3)
+dr.ellipse(screen, (255, 253, 247), (171, 351, 70, 30), 0)
+dr.ellipse(screen, (0, 0, 0), (170, 350, 72, 32), 3)
+dr.ellipse(screen, (255, 253, 247), (141, 501, 120, 90), 0)
+dr.ellipse(screen, (0, 0, 0), (140, 500, 122, 92), 3)
+dr.ellipse(screen, (255, 253, 247), (211, 571, 91, 40), 0)
+dr.ellipse(screen, (0, 0, 0), (210, 570, 92, 42), 3)
 
 
 # рыба
@@ -105,7 +126,7 @@ while not finished:
             finished = True
 
 
+pygame.image.save(screen, "bear4.jpg")
 
-pygame.image.save(screen, "bear.jpeg")
 
 pygame.quit()

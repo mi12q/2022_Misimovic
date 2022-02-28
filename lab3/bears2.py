@@ -31,10 +31,10 @@ def draw_rect_alpha(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-draw_circle_alpha(screen, (255, 255, 255, 200), (310, 120), 140)
+draw_circle_alpha(screen, (255, 255, 255, 200), (310, 120), 160)
 dr.circle(screen, (255, 255, 255), (310, 120), 15)
-draw_rect_alpha(screen, (255, 255, 255, 200), (295, 10, 30, 250))
-draw_rect_alpha(screen, (255, 255, 255, 200), (170, 105, 280, 30))
+draw_rect_alpha(screen, (255, 255, 255, 200), (295, 0, 30, 300))
+draw_rect_alpha(screen, (255, 255, 255, 200), (170, 105, 300, 30))
 
 dr.circle(screen, (255, 255, 255), (435, 120), 12)
 dr.circle(screen, (255, 255, 255), (185, 120), 12)
@@ -103,9 +103,5 @@ while not finished:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
-
-
-
-pygame.image.save(screen, "bear.jpeg")
 
 pygame.quit()
