@@ -47,7 +47,7 @@ class Ball:
 
         Function changes balls coordinates and its direction if ball hits the wall
         :param width: - screen width
-        :param height: - screen height  :param width:
+        :param height: - screen height
         :param min_velocity: - minimal velocity
         :param max_velocity: - maximal velocity
         :return:
@@ -126,7 +126,7 @@ class Square:
         score = 0
         x1 = event.pos[0]
         y1 = event.pos[1]
-        d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)  # distance between points
+        d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)
 
         if d <= self.size:
             score = 5
