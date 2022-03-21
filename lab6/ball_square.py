@@ -2,8 +2,7 @@ import pygame
 from random import randint, choice
 import math
 import operator
-# import time
-# from sys import exit
+import numpy as np
 from tabulate import tabulate
 
 
@@ -36,30 +35,37 @@ class Ball:
 
     def move(self, width, height, min_velocity, max_velocity):
         """
+
         Function changes balls coordinates and its direction if ball hits the wall
         :param width: - screen width
-        :param height: - screen height
+        :param height: - screen height  :param width:
+        :param min_velocity: - minimal velocity
+        :param max_velocity: - maximal velocity
         :return:
         """
         t = 0.1
         self.x += self.vx * t
         self.y += self.vy * t
+
         if self.x > width - self.radius:
             self.x = width - self.radius
-            #self.vx += randint(min_velocity, max_velocity)
             self.vx *= -1
+            self.vy = choice([-1, 1]) * randint(min_velocity, max_velocity)
+
         if self.y > height - self.radius:
             self.y = height - self.radius
-            # self.vy += randint(min_velocity, max_velocity)
             self.vy *= -1
+            self.vx = choice([-1, 1]) * randint(min_velocity, max_velocity)
+
         if self.y < self.radius:
             self.y = self.radius
-            # self.vy +=  randint(min_velocity, max_velocity)
             self.vy *= -1
+            self.vx = choice([-1, 1]) * randint(min_velocity, max_velocity)
+
         if self.x < self.radius:
             self.x = self.radius
-            # self.vx += randint(min_velocity, max_velocity)
             self.vx *= -1
+            self.vy = choice([-1, 1]) * randint(min_velocity, max_velocity)
 
     def score(self, event):
         """
@@ -68,8 +74,8 @@ class Ball:
         :return: - returns 1 if player clicked on the ball
         """
         score = 0
-        x1 = event.pos[0]  # mouse coordinate x
-        y1 = event.pos[1]  # mouse coordinate y
+        x1 = event.pos[0]
+        y1 = event.pos[1]
         d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)  # distance between points
 
         if d <= self.radius:
@@ -109,18 +115,21 @@ class Square:
         :return: - returns 5 if player clicked on the square
         """
         score = 0
-        x1 = event.pos[0]  # mouse coordinate x
-        y1 = event.pos[1]  # mouse coordinate y
+        x1 = event.pos[0]
+        y1 = event.pos[1]
         d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)  # distance between points
 
         if d <= self.size:
             score = 5
         return score
 
-    def move(self, width):
+    def move(self, width, min_velocity, max_velocity):
         """
+
         Function changes square coordinates and its direction if square hits the wall
         :param width: - screen width
+        :param min_velocity: - minimal velocity
+        :param max_velocity: - maximal velocity
         :return:
         """
         t = 0.1
@@ -128,13 +137,11 @@ class Square:
 
         if self.x > width - self.size:
             self.x = width - self.size
-
-            self.vx *= -1
+            self.vx = -1 * self.vx / abs(self.vx) * randint(min_velocity, 2 * max_velocity)
 
         if self.x < self.size / 2:
             self.x = self.size / 2
-
-            self.vx *= -1
+            self.vx = -1 * self.vx / abs(self.vx) * randint(min_velocity, 2 * max_velocity)
 
 
 def new_ball(screen, colors, min_velocity, max_velocity, width, height):
@@ -187,8 +194,8 @@ def game():
     """
     pygame.init()
 
-    min_velocity = 200
-    max_velocity = 300
+    min_velocity = 150
+    max_velocity = 350
     ball_number = 30
     square_number = 30
     fps = 15
@@ -242,7 +249,7 @@ def game():
             ball.draw()
 
         for square in squares:
-            square.move(width)
+            square.move(width, min_velocity, max_velocity)
             square.draw()
 
         pygame.display.update()
@@ -254,7 +261,7 @@ def game():
 
 def list_of_players():
     """
-    Function creates a list of the best players and saves it to file
+    Function creates a list of the best players and saves it to text file
     :return:
     """
     print("Insert number of players: ")
@@ -269,7 +276,7 @@ def list_of_players():
 
     a = ['Player number', 'Score']
     with open('players.txt', 'w') as f:
-        f.write(tabulate(sorted_scores, headers=a))
+        f.write(tabulate(np.array(sorted_scores), headers=a))
 
 
 list_of_players()
