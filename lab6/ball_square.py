@@ -5,6 +5,15 @@ import operator
 import numpy as np
 from tabulate import tabulate
 
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
+MAGENTA = (255, 0, 255)
+CYAN = (0, 255, 255)
+BLACK = (0, 0, 0)
+COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
+
 
 class Ball:
     def __init__(self, x, y, radius, vx, vy, color, screen):
@@ -76,7 +85,7 @@ class Ball:
         score = 0
         x1 = event.pos[0]
         y1 = event.pos[1]
-        d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)  # distance between points
+        d = math.sqrt((self.x - x1) ** 2 + (self.y - y1) ** 2)
 
         if d <= self.radius:
             score = 1
@@ -187,9 +196,10 @@ def new_square(screen, colors, min_velocity, max_velocity, width, height):
     return square
 
 
-def game():
+def game(color):
     """
     Function starts the game and returns the score of the current player
+    :param color: - list of colors
     :return: - count
     """
     pygame.init()
@@ -203,15 +213,6 @@ def game():
     height = 700
     screen = pygame.display.set_mode((width, height))
 
-    red = (255, 0, 0)
-    blue = (0, 0, 255)
-    yellow = (255, 255, 0)
-    green = (0, 255, 0)
-    magenta = (255, 0, 255)
-    cyan = (0, 255, 255)
-    black = (0, 0, 0)
-    colors = [red, blue, yellow, green, magenta, cyan]
-
     pygame.display.update()
     clock = pygame.time.Clock()
     finished = False
@@ -220,9 +221,9 @@ def game():
     squares = []
 
     for i in range(ball_number):
-        balls.append(new_ball(screen, colors, min_velocity, max_velocity, width, height))
+        balls.append(new_ball(screen, color, min_velocity, max_velocity, width, height))
     for i in range(square_number):
-        squares.append(new_square(screen, colors, min_velocity, max_velocity, width, height))
+        squares.append(new_square(screen, color, min_velocity, max_velocity, width, height))
 
     while not finished:
         clock.tick(fps)
@@ -253,15 +254,16 @@ def game():
             square.draw()
 
         pygame.display.update()
-        screen.fill(black)
+        screen.fill(BLACK)
 
     pygame.quit()
     return count
 
 
-def list_of_players():
+def list_of_players(color):
     """
     Function creates a list of the best players and saves it to text file
+    :param color: - list of colors
     :return:
     """
     print("Insert number of players: ")
@@ -269,7 +271,7 @@ def list_of_players():
     scores = {}
 
     for i in range(1, int(n) + 1):
-        score = game()
+        score = game(color)
         scores[i] = score
 
     sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
@@ -279,4 +281,4 @@ def list_of_players():
         f.write(tabulate(np.array(sorted_scores), headers=a))
 
 
-list_of_players()
+list_of_players(COLORS)
