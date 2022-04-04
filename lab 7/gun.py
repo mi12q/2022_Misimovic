@@ -22,7 +22,7 @@ HEIGHT = 600
 
 
 class Ball:
-    def __init__(self, screen: pygame.Surface, x=40, y=450):
+    def __init__(self, screen: pygame.Surface, x=40, y=450):  # napisati sve u init
         """ Конструктор класса ball
 
         Args:
@@ -90,7 +90,6 @@ class Ball:
             self.r
         )
 
-
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
@@ -106,17 +105,21 @@ class Ball:
         else:
             return False
 
+
 class Gun:
-    def __init__(self, screen):
+    def __init__(self, screen, type):
         self.screen = screen
         self.f2_power = 10
+        self.x = None
+        self.vx = 2
         self.f2_on = 0
         self.an = 1
         self.color = GREY
         self.point1 = [40, 450]
+        self.point_up = [40, 100]
         self.height = 20
         self.width = 10
-
+        self.type = type
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -129,7 +132,7 @@ class Gun:
         """
 
         bullet += 1
-        new_ball = Ball(self.screen)
+        new_ball = Ball(self.screen, self.point1[0], self.point1[1])
         new_ball.r += 5
         angle = math.atan2((event.pos[1] - new_ball.y), (event.pos[0] - new_ball.x))
         new_ball.vx = self.f2_power * math.cos(angle)
@@ -143,22 +146,77 @@ class Gun:
         if event:
             x = event.pos[0] - 20
             y = 450 - event.pos[1]
-            if x == 0:
-                x = 1
+            if x <= 0:
+                x = - (event.pos[0] + 1)
             self.an = math.atan(y / x)
         if self.f2_on:
             self.color = RED
         else:
             self.color = GREY
 
-    def draw(self):
-
+    def draw1(self):
+        a = (self.point1[0] - 25, self.point1[1] + 1)
+        b = (self.point1[0] + 25, self.point1[1] + 15)
+        c = (self.point1[0] - 25, self.point1[1] + 15)
+        d = (self.point1[0] + 25, self.point1[1] + 1)
         point2 = [self.point1[0] + self.height, self.point1[1]]
         point3 = [self.point1[0], self.point1[1] - self.width]
         point4 = [self.height + self.point1[0], -self.width + self.point1[1]]
         pygame.draw.polygon(self.screen, self.color, (self.point1, rotate_point(point2, self.an, self.point1),
                                                       rotate_point(point4, self.an, self.point1),
                                                       rotate_point(point3, self.an, self.point1)))
+        pygame.draw.polygon(self.screen, self.color, (a, c, b, d))
+        pygame.draw.circle(self.screen, self.color, (self.point1[0] - 15, self.point1[1] + 20), 7)
+        pygame.draw.circle(self.screen, self.color, (self.point1[0] + 15, self.point1[1] + 20), 7)
+
+    def draw2(self):
+        a = (self.point_up[0] - 25, self.point_up[1] + 1)
+        b = (self.point_up[0] + 25, self.point_up[1] - 15)
+        c = (self.point_up[0] - 25, self.point_up[1] - 15)
+        d = (self.point_up[0] + 25, self.point_up[1] + 1)
+        point2 = [self.point_up[0] + self.height, self.point_up[1]]
+        point3 = [self.point_up[0], self.point_up[1] - self.width]
+        point4 = [self.height + self.point_up[0], -self.width + self.point_up[1]]
+        pygame.draw.polygon(self.screen, self.color, (self.point_up, rotate_point(point2, self.an, self.point_up),
+                                                      rotate_point(point4, self.an, self.point_up),
+                                                      rotate_point(point3, self.an, self.point_up)))
+        pygame.draw.polygon(self.screen, self.color, (a, c, b, d))
+        pygame.draw.circle(self.screen, self.color, (self.point_up[0] - 15, self.point_up[1] - 20), 7)
+        pygame.draw.circle(self.screen, self.color, (self.point_up[0] + 15, self.point_up[1] - 20), 7)
+
+    def draw(self):
+        if self.type == 'down':
+            self.draw1()
+        if self.type == 'up':
+            self.draw2()
+
+    def move(self, direction):
+        t = 0.7
+        if self.type == 'down':
+
+            if self.point1[0] > WIDTH - 25:
+                self.vx *= -1
+
+            if self.point1[0] < 25:
+                self.vx *= -1
+
+            if direction == 'right':
+                self.point1[0] += self.vx * t
+            if direction == 'left':
+                self.point1[0] -= self.vx * t
+
+        if self.type == 'up':
+
+            if self.point_up[0] > WIDTH - 25:
+                self.vx *= -1
+
+            if self.point_up[0] < 25:
+                self.vx *= -1
+
+            if direction == 'right':
+                self.point_up[0] += self.vx * t
+            if direction == 'left':
+                self.point_up[0] -= self.vx * t
 
     def power_up(self):
         if self.f2_on:
@@ -178,6 +236,7 @@ class Target():
         self.x = None
         self.y = None
         self.r = None
+        self.b = None
         self.color = None
         self.size = None
         self.vy = 2
@@ -191,10 +250,10 @@ class Target():
         """ Инициализация новой цели. """
         self.x = randint(600, 700)
         self.y = randint(10, 400)
-        self.r = randint(10, 50)
+        self.r = randint(20, 70)
+        self.b = randint(20, 70)
         self.live = 1
         self.color = RED
-
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
@@ -215,11 +274,12 @@ class Target():
         )
 
     def draw_square(self):
-        pygame.draw.rect(self.screen, BLACK, [self.x, self.y, self.r+1, self.r+1])
+        pygame.draw.rect(self.screen, BLACK, [self.x, self.y, self.r + 1, self.r + 1])
         pygame.draw.rect(self.screen, BLUE, [self.x, self.y, self.r, self.r])
 
-    def draw_star(self):
+    def draw_ellipse(self):
 
+        pygame.draw.ellipse(self.screen, YELLOW, [self.x, self.y, self.r + 1, self.b + 1], width=5)
 
     def move_ball(self):
 
@@ -245,17 +305,43 @@ class Target():
 
         self.x += self.vx * t
 
+    def move_ellipse(self):
+
+        t = 1
+        self.x += self.vx * t
+        self.y += self.vy * t
+
+        if self.x > WIDTH - self.b:
+            self.x = WIDTH - self.b
+            self.vx *= -1
+
+        if self.y > HEIGHT - 100 - self.r:
+            self.y = HEIGHT - 100 - self.r
+            self.vy *= -1
+
+        if self.y < self.r:
+            self.y = self.r
+            self.vy *= -1
+
+        if self.x < self.b:
+            self.x = self.b
+            self.vx *= -1
+
     def draw(self):
         if self.type == 'ball':
             self.draw_ball()
         if self.type == 'square':
             self.draw_square()
+        if self.type == 'ellipse':
+            self.draw_ellipse()
 
     def move(self):
         if self.type == 'ball':
             self.move_ball()
         if self.type == 'square':
             self.move_square()
+        if self.type == 'ellipse':
+            self.move_ellipse()
 
 
 def rotate_point(point, angle, origin):
@@ -266,7 +352,6 @@ def rotate_point(point, angle, origin):
     point[1] = y
 
     return x, y
-
 
 
 def write(screen):
@@ -286,6 +371,79 @@ def write(screen):
     screen.blit(text, rect)
 
 
+def write_score(screen, obj):
+    font = pygame.font.SysFont('consolas', 100)
+    score = obj.points
+    text = "Hit goal in " + str(score)
+    text_surface = font.render(text, True, BLACK)
+    screen.blit(text_surface, (10, 300))
+
+
+def events(gun1, gun2, balls, bullet):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            gun1.fire2_start(event)
+        elif event.type == pygame.MOUSEBUTTONUP:
+            gun1.fire2_end(event, balls, bullet)
+        elif event.type == pygame.MOUSEMOTION:
+            gun1.targetting(event)
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RIGHT]:
+        gun1.move('right')
+    if keys[pygame.K_LEFT]:
+        gun1.move('left')
+    if keys[pygame.K_a]:
+        gun2.move('left')
+    if keys[pygame.K_d]:
+        gun2.move('right')
+
+
+def create_game_objects(screen):
+    gun1 = Gun(screen, 'down')
+    gun2 = Gun(screen, 'up')
+    target1 = Target(screen, 'ball')
+    target2 = Target(screen, 'square')
+    target3 = Target(screen, 'ellipse')
+
+    return gun1, gun2, target1, target2, target3
+
+
+def move_guns_targets(gun1, gun2, target1, target2, target3):
+    gun1.draw()
+    gun2.draw()
+    target1.move()
+    target1.draw()
+    target2.move()
+    target2.draw()
+    target3.move()
+    target3.draw()
+
+
+def check_if_hit(balls, target1, target2, target3):
+    for b in balls:
+        b.move()
+
+        if b.vx == 0:
+            balls.remove(b)
+        if b.hittest(target1) and target1.live:
+            balls.remove(b)
+            target1.live = 0
+            target1.hit()
+            target1.new_target()
+        if b.hittest(target2) and target2.live:
+            balls.remove(b)
+            target2.live = 0
+            target2.hit()
+            target2.new_target()
+        if b.hittest(target3) and target3.live:
+            balls.remove(b)
+            target3.live = 0
+            target3.hit()
+            target3.new_target()
+
 
 def game():
     pygame.init()
@@ -294,54 +452,19 @@ def game():
     bullet = 0
     balls = []
     clock = pygame.time.Clock()
-    gun = Gun(screen)
-    target1 = Target(screen, 'ball')
-    target2 = Target(screen, 'square')
-
     finished = False
+    gun1, gun2, target1, target2, target3 = create_game_objects(screen)
 
     while not finished:
         screen.fill(WHITE)
-        gun.draw()
-        target1.move()
-        target1.draw()
-        target2.move()
-        target2.draw()
-
-
+        move_guns_targets(gun1, gun2, target1, target2, target3)
         for b in balls:
             b.draw()
         pygame.display.update()
-
         clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                finished = True
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                gun.fire2_start(event)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                gun.fire2_end(event, balls, bullet)
-            elif event.type == pygame.MOUSEMOTION:
-                gun.targetting(event)
+        events(gun1, gun2, balls, bullet)
+        check_if_hit(balls, target1, target2, target3)
+        gun1.power_up()
 
-
-
-        for b in balls:
-            b.move()
-
-            if b.vx == 0:
-                balls.remove(b)
-            if b.hittest(target1) and target1.live:
-                target1.live = 0
-                target1.hit()
-                target1.new_target()
-            if b.hittest(target2) and target2.live:
-                target2.live = 0
-                target2.hit()
-                target2.new_target()
-
-        gun.power_up()
-
-    pygame.quit()
 
 game()
